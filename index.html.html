@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor's Day Greeting Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,600;1,700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+    .bg-whatsapp-green {
+      background-color: #25D366;
+    }
+    .highlight-text {
+      color: #d97706;
+      font-weight: 700;
+    }
+    #greetingCard.fixed-size {
+      width: 800px;
+      height: 500px;
+      padding: 24px;
+      border: 6px double #4c51bf;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen p-6">
+
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-2xl">
+    <h1 class="text-4xl font-bold text-center text-indigo-700 mb-6">Create Doctor's Day e-Greeting</h1>
+
+    <div class="mb-4">
+      <label class="block text-gray-800 font-semibold">Doctor's Name:</label>
+      <input type="text" id="doctorName" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Dr. Name"/>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-800 font-semibold">Speciality:</label>
+      <input type="text" id="speciality" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Cardiologist, Physician etc"/>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-800 font-semibold">Upload Doctor's Photo:</label>
+      <input type="file" accept="image/*" id="doctorPhoto" class="w-full border border-gray-300 p-2 rounded-lg" onchange="previewPhoto(event)"/>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-800 font-semibold">Select Language:</label>
+      <select id="language" class="w-full border border-gray-300 p-2 rounded-lg">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="mr">Marathi</option>
+        <option value="bn">Bengali</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-800 font-semibold">Choose Background:</label>
+      <select id="background" class="w-full border border-gray-300 p-2 rounded-lg">
+        <option value="bg-blue-100">Light Blue</option>
+        <option value="bg-green-100">Light Green</option>
+        <option value="bg-yellow-100">Light Yellow</option>
+        <option value="bg-pink-100">Light Pink</option>
+        <option value="bg-gradient-to-r from-purple-300 via-pink-300 to-red-300">Romantic Purple</option>
+      </select>
+    </div>
+
+    <div class="flex justify-between mt-6">
+      <button onclick="generateGreeting()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold">Generate</button>
+      <button onclick="downloadGreeting()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold">Download</button>
+    </div>
+
+    <div id="downloadSuccess" class="hidden mt-4 text-green-700 font-semibold bg-green-100 p-3 rounded-lg text-center">
+      🎉 Greeting downloaded! Now open WhatsApp and manually share the image.
+    </div>
+  </div>
+
+  <!-- Greeting Card -->
+  <div id="greetingCard" class="fixed-size mx-auto mt-8 rounded-2xl text-center text-black hidden">
+    <div id="greetingContent" class="p-6 rounded-xl">
+      <h2 class="text-5xl font-bold mb-3 text-indigo-800 tracking-wide">Happy Doctor's Day</h2>
+      <img id="photoPreview" src="" alt="Doctor Photo" class="w-28 h-28 mx-auto rounded-full object-cover border-4 border-indigo-300 mb-3 hidden shadow-md"/>
+      <p class="text-xl font-semibold mb-1 text-gray-800" id="greetName">Dr. [Name]</p>
+      <p class="text-base italic text-gray-600 mb-3" id="greetSpeciality">[Speciality]</p>
+      <p id="greetMessage" class="mb-4 text-base text-gray-700 leading-relaxed">
+        You are the healing hands, the listening heart, and the guardian of life.<br>
+        Thank you for your tireless service, endless compassion, and unwavering dedication.
+      </p>
+      <p class="text-xl font-bold text-green-700 mb-3" id="greetThanks">Thank You</p>
+      <p class="text-sm mt-4 font-bold bg-yellow-100 text-yellow-800 p-2 rounded-xl">
+        <span class="highlight-text">Dapalex 10</span>, <span class="highlight-text">Dapalex SM</span>,
+        <span class="highlight-text">Dapalex S</span>, <span class="highlight-text">Dapalex M</span>,
+        <span class="highlight-text">Dapalex GM</span>, <span class="highlight-text">Dapalex P</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const messages = {
+      en: {
+        message: `You are the healing hands, the listening heart, and the guardian of life.<br>
+                  Thank you for your tireless service, endless compassion, and unwavering dedication.`,
+        thank: "Thank You"
+      },
+      hi: {
+        message: "आप जीवन के रक्षक, सुनने वाले हृदय और सेवा के प्रतीक हैं।<br>आपकी सेवा और समर्पण के लिए धन्यवाद।",
+        thank: "धन्यवाद"
+      },
+      mr: {
+        message: "आप जीवनाचे रक्षक, ऐकणारे हृदय आणि सेवेचे प्रतीक आहात.<br>आपल्या सेवेबद्दल आणि समर्पणाबद्दल मन:पूर्वक आभार.",
+        thank: "धन्यवाद"
+      },
+      bn: {
+        message: "আপনি জীবনের রক্ষক, শুনতে জানেন এমন হৃদয় ও সেবার প্রতীক।<br>আপনার সেবা ও নিষ্ঠার জন্য ধন্যবাদ।",
+        thank: "ধন্যবাদ"
+      }
+    };
+
+    function generateGreeting() {
+      const name = document.getElementById('doctorName').value;
+      const speciality = document.getElementById('speciality').value;
+      const background = document.getElementById('background').value;
+      const lang = document.getElementById('language').value;
+
+      document.getElementById('greetName').innerText = name ? `Dr. ${name}` : '';
+      document.getElementById('greetSpeciality').innerText = speciality || '';
+      document.getElementById('greetMessage').innerHTML = messages[lang].message;
+      document.getElementById('greetThanks').innerText = messages[lang].thank;
+
+      const content = document.getElementById('greetingContent');
+      content.className = `p-6 rounded-xl ${background}`;
+
+      document.getElementById('greetingCard').classList.remove('hidden');
+    }
+
+    function downloadGreeting() {
+      const card = document.getElementById('greetingCard');
+      const scale = 2;
+      html2canvas(card, {
+        width: card.offsetWidth,
+        height: card.offsetHeight,
+        scale: scale
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'DoctorsDayGreeting.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        document.getElementById('downloadSuccess').classList.remove('hidden');
+      });
+    }
+
+    function previewPhoto(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById('photoPreview');
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('hidden');
+      }
+    }
+  </script>
+
+</body>
+</html>
